@@ -13,8 +13,9 @@ Verifying the formalization
 
 The formalization is written in (Agda)[https://github.com/agda/agda]
 and makes heavy use of the (Agda standard
-library)[https://agda.github.io/agda-stdlib].  The latest versions of
-the Agda distribution and standard library, along with setup
+library)[https://agda.github.io/agda-stdlib].  The code in this
+repository has been verified using Agda 2.4.2.2.  The latest versions
+of the Agda distribution and standard library, along with setup
 instructions, can be found at
 
  * https://github.com/agda/agda
