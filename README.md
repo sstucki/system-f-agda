@@ -36,7 +36,7 @@ in GNU/Emacs by typing `C-x C-n <expression>`.  E.g. typing
     C-x C-n typeOf [] (Λ (λ' (var zero) (var zero)))
 
 in the module `SystemF.TypeCheck` runs the type-checking decision
-procedures to determine the type of the polymorphic identity function.
+procedure to determine the type of the polymorphic identity function.
 It should return
 
     yes (∀' (var zero →' var zero) , Λ (λ' (var zero) (var zero)))
@@ -57,5 +57,4 @@ See the `LICENSE` file.
 
 
 ------------------------------------------------------------------------
-Author: Sandro Stucki
-Copyright (c) 2015 EPFL
+Sandro Stucki -- Copyright (c) 2015 EPFL
