@@ -13,7 +13,7 @@
 -- The code makes heavy use of the Agda standard library, which is
 -- freely available from
 --
---   https://agda.github.io/agda-stdlib
+--   https://github.com/agda/agda-stdlib/
 
 
 module README where

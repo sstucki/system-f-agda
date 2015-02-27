@@ -5,11 +5,14 @@ iso-recursive types
 
 The code in this repository contains an Agda formalization of the
 Girard-Reynolds polymorphic lambda calculus (System F) extended with
-iso-recursive types.  The formalization includes two variants of an
-operational call-by-value semantics (small-step and big-step) with
-associated type soundness proofs, an equivalence proof of the two
-semantics, as well as proofs of decidability of type checking and
-uniqueness of typing derivations.
+general recursion and iso-recursive types.  The formalization includes
+two variants of an operational call-by-value semantics (small-step and
+big-step) with associated type soundness proofs, an equivalence proof
+of the two semantics, as well as proofs of decidability of type
+checking and uniqueness of typing derivations.
+
+The file `src/README.agda` contains a more detailed overview of the
+formalization.
 
 
 Verifying the formalization
@@ -23,7 +26,7 @@ of the Agda distribution and standard library, along with setup
 instructions, can be found at
 
  * https://github.com/agda/agda
- * https://agda.github.io/agda-stdlib
+ * https://github.com/agda/agda-stdlib/
 
 The easiest way to verify all the code is to compile the `README.agda`
 file from the `src/` directory,
