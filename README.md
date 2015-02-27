@@ -20,25 +20,25 @@ Verifying the formalization
 
 The formalization is written in [Agda](https://github.com/agda/agda)
 and makes heavy use of the [Agda standard
-library](https://agda.github.io/agda-stdlib).  The code in this
+library](https://github.com/agda/agda-stdlib).  The code in this
 repository has been verified using Agda 2.4.2.2.  The latest versions
 of the Agda distribution and standard library, along with setup
 instructions, can be found at
 
  * https://github.com/agda/agda
- * https://github.com/agda/agda-stdlib/
+ * https://github.com/agda/agda-stdlib
 
 The easiest way to verify all the code is to compile the `README.agda`
-file from the `src/` directory,
+file from the `src/` directory.  Run
 
     agda src/README.agda -i src -i <path-to-Agda-standard-library>/src
 
-or to simply load the `README.agda` file in the [Agda Emacs
-mode](https://github.com/agda/agda#configuring-the-emacs-mode)
-(`agda2-mode`) by opening the file and typing `C-c C-l`.
+in the console, or simply open the file in the
+[Agda Emacs mode](https://github.com/agda/agda#configuring-the-emacs-mode)
+and type `C-c C-l`.
 
 Using the `agda2-mode` one can also run Agda functions interactively
-in GNU/Emacs by typing `C-x C-n <expression>`.  E.g. typing
+in GNU/Emacs by typing `C-x C-n <expression>`.  For example, typing
 
     C-x C-n typeOf [] (Λ (λ' (var zero) (var zero)))
 
