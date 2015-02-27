@@ -37,8 +37,8 @@ in the console, or simply open the file in the
 [Agda Emacs mode](https://github.com/agda/agda#configuring-the-emacs-mode)
 and type `C-c C-l`.
 
-Using the `agda2-mode` one can also run Agda functions interactively
-in GNU/Emacs by typing `C-x C-n <expression>`.  For example, typing
+Using the Emacs mode one can also run Agda functions interactively in
+Emacs by typing `C-x C-n <expression>`.  For example, typing
 
     C-x C-n typeOf [] (Λ (λ' (var zero) (var zero)))
 
