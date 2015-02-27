@@ -263,10 +263,10 @@ module AlternativeEquality {a} where
 
       -- Equational reasoning. Note that including full transitivity
       -- for weak equality would make _≈P_ trivial; a similar problem
-      -- applies to _≳P_ (never ≳P now x would be provable). Instead
-      -- the definition of RelP includes limited notions of
-      -- transitivity, similar to weak bisimulation up-to various
-      -- things.
+      -- applies to _≳P_ (never ≳P return x would be
+      -- provable). Instead the definition of RelP includes limited
+      -- notions of transitivity, similar to weak bisimulation up-to
+      -- various things.
 
       _∎      : ∀ {k} x → RelP k x x
       sym     : ∀ {k x y} {eq : Partiality.Equality k} (x∼y : RelP k x y) →
