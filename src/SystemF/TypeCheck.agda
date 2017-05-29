@@ -167,7 +167,7 @@ functional′ t∈a = contraposition (functional t∈a)
 ------------------------------------------------------------------------
 -- Type checking
 
-infix 4 check_⊢_∈_
+infix 5 check_⊢_∈_
 
 -- A predicate for typable terms
 HasType : ∀ {m n} → Ctx m n → Term m n → Set
