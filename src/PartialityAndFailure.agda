@@ -226,7 +226,7 @@ module AlternativeEquality {a} where
     -- "syntactic" equality (_≡_) and extended to include failure.
 
     infix  4 _≅P_ _≳P_ _≈P_
-    infix  2 _∎
+    infix  3 _∎
     infixr 2 _≡⟨_⟩_ _≅⟨_⟩_ _≳⟨_⟩_ _≳⟨_⟩≅_ _≳⟨_⟩≈_ _≈⟨_⟩≅_ _≈⟨_⟩≲_
     infixl 1 _>>=_
 
