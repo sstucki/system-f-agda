@@ -4,8 +4,6 @@
 
 module SystemF.WtTerm where
 
-import Category.Applicative.Indexed as Applicative
-open Applicative.Morphism using (op-<$>)
 open import Data.Fin using (Fin; zero; suc; inject+)
 open import Data.Fin.Substitution
 open import Data.Fin.Substitution.Lemmas
@@ -15,7 +13,7 @@ open import Data.Nat using (zero; suc; ℕ; _+_)
 open import Data.Product using (_,_)
 open import Data.Vec using (Vec; []; _∷_; _++_; lookup; map; toList; zip)
 open import Data.Vec.Properties
-  using (map-∘; map-cong; lookup-morphism; lookup-++-inject+)
+  using (map-∘; map-cong; lookup-map; lookup-++-inject+)
 open import Function as Fun using (_∘_)
 open import Relation.Binary.PropositionalEquality as PropEq
   using (_≡_; refl; cong; cong₂; subst; sym)
@@ -138,7 +136,7 @@ module CtxLemmas where
   -- lookup in typing context.
   /Var-lookup : ∀ {m n k} (x : Fin m) (ρ : Sub Fin m k) (Γ : Ctx k n) →
                 lookup x (ρ /Var Γ) ≡ lookup (lookup x ρ) Γ
-  /Var-lookup x ρ Γ = op-<$> (lookup-morphism x) _ _
+  /Var-lookup x ρ Γ = lookup-map x _ _
 
   -- Term variable substitution (renaming) commutes with weakening of
   -- typing contexts with an additional term variable.
