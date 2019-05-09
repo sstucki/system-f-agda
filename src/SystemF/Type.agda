@@ -31,14 +31,14 @@ data Type (n : ℕ) : Set where
 -- Substitutions in types
 
 module TypeSubst where
-  module TypeApp {T} (l : Lift T Type) where
+  module TypeApp {T : ℕ → Set} (l : Lift T Type) where
     open Lift l hiding (var)
 
     infixl 8 _/_
 
     -- Apply a substitution to a type
     _/_ : ∀ {m n} → Type m → Sub T m n → Type n
-    var x    / σ = lift (lookup x σ)
+    var x    / σ = lift (lookup σ x)
     (a →' b) / σ = (a / σ) →' (b / σ)
     ∀' a     / σ = ∀' (a / σ ↑)
     μ a      / σ = μ (a / σ ↑)

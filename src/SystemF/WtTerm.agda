@@ -4,8 +4,9 @@
 
 module SystemF.WtTerm where
 
+import Category.Functor as Functor
 import Category.Applicative.Indexed as Applicative
-open Applicative.Morphism using (op-<$>)
+open Functor.Morphism using (op-<$>)
 open import Data.Fin using (Fin; zero; suc; inject+)
 open import Data.Fin.Substitution
 open import Data.Fin.Substitution.Lemmas
@@ -15,7 +16,9 @@ open import Data.Nat using (zero; suc; ℕ; _+_)
 open import Data.Product using (_,_)
 open import Data.Vec using (Vec; []; _∷_; _++_; lookup; map; toList; zip)
 open import Data.Vec.Properties
-  using (map-∘; map-cong; lookup-morphism; lookup-++-inject+)
+  using (map-∘; map-cong; lookup-++-inject+)
+open import Data.Vec.Categorical
+  using (lookup-functor-morphism)
 open import Function as Fun using (_∘_)
 open import Relation.Binary.PropositionalEquality as PropEq
   using (_≡_; refl; cong; cong₂; subst; sym)
@@ -49,7 +52,7 @@ module CtxSubst where
 
   -- Variable substitution (renaming) lifted to typing contexts
   _/Var_ : ∀ {m n k} → Sub Fin m k → Ctx k n → Ctx m n
-  σ /Var Γ = map (λ x → lookup x Γ) σ
+  σ /Var Γ = map (λ x → lookup Γ x) σ
 
 open TypeSubst using () renaming (_[/_]  to _[/tp_])
 open CtxSubst  using () renaming (weaken to weakenCtx)
@@ -59,7 +62,7 @@ infixl 9 _·_ _[_]
 
 -- Typing derivations for well-typed terms
 data _⊢_∈_ {m n} (Γ : Ctx m n) : Term m n → Type n → Set where
-  var    : (x : Fin m) → Γ ⊢ var x ∈ lookup x Γ
+  var    : (x : Fin m) → Γ ⊢ var x ∈ lookup Γ x
   Λ      : ∀ {t a} → (weakenCtx Γ) ⊢ t ∈ a → Γ ⊢ Λ t ∈ ∀' a
   λ'     : ∀ {t b} → (a : Type n) → a ∷ Γ ⊢ t ∈ b → Γ ⊢ λ' a t ∈ a →' b
   μ      : ∀ {t} → (a : Type n) → a ∷ Γ ⊢ t ∈ a → Γ ⊢ μ a t ∈ a
@@ -97,7 +100,7 @@ data _⊢ⁿ_∈_ {m n} (Γ : Ctx m n) :
 -- Lookup a well-typed term in a collection thereof.
 lookup-⊢ : ∀ {m n k} {Γ : Ctx m n} {ts : Vec (Term m n) k}
              {as : Vec (Type n) k} →
-           (x : Fin k) → Γ ⊢ⁿ ts ∈ as → Γ ⊢ lookup x ts ∈ lookup x as
+           (x : Fin k) → Γ ⊢ⁿ ts ∈ as → Γ ⊢ lookup ts x ∈ lookup as x
 lookup-⊢ zero    (⊢t ∷ ⊢ts) = ⊢t
 lookup-⊢ (suc x) (⊢t ∷ ⊢ts) = lookup-⊢ x ⊢ts
 
@@ -119,9 +122,9 @@ module CtxLemmas where
   /Var-/ ρ Γ σ = begin
       (ρ /Var Γ) / σ
     ≡⟨ sym (map-∘ _ _ ρ) ⟩
-      map (λ x → (lookup x Γ) Tp./ σ) ρ
-    ≡⟨ map-cong (λ x → sym (Tp.lookup-⊙ x)) ρ ⟩
-      map (λ x → lookup x (Γ / σ)) ρ
+      map (λ x → (lookup Γ x) Tp./ σ) ρ
+    ≡⟨ map-cong (λ x → sym (Tp.lookup-⊙ x {ρ₁ = Γ})) ρ ⟩
+      map (λ x → lookup (Γ / σ) x) ρ
     ∎
 
   -- Term variable substitution (renaming) commutes with weakening of
@@ -131,24 +134,24 @@ module CtxLemmas where
   /Var-weaken ρ Γ = begin
     weaken (ρ /Var Γ)    ≡⟨ Tp.map-weaken ⟩
     (ρ /Var Γ) / Tp.wk   ≡⟨ /Var-/ ρ Γ Tp.wk ⟩
-    ρ /Var (Γ / Tp.wk)   ≡⟨ sym (cong (_/Var_ ρ) Tp.map-weaken) ⟩
+    ρ /Var (Γ / Tp.wk)   ≡⟨ sym (cong (_/Var_ ρ) (Tp.map-weaken {ρ = Γ})) ⟩
     ρ /Var (weaken Γ)    ∎
 
   -- Term variable substitution (renaming) commutes with term variable
   -- lookup in typing context.
   /Var-lookup : ∀ {m n k} (x : Fin m) (ρ : Sub Fin m k) (Γ : Ctx k n) →
-                lookup x (ρ /Var Γ) ≡ lookup (lookup x ρ) Γ
-  /Var-lookup x ρ Γ = op-<$> (lookup-morphism x) _ _
+                lookup (ρ /Var Γ) x ≡ lookup Γ (lookup ρ x)
+  /Var-lookup x ρ Γ = op-<$> (lookup-functor-morphism x) (λ x → lookup Γ x) ρ
 
   -- Term variable substitution (renaming) commutes with weakening of
   -- typing contexts with an additional term variable.
   /Var-∷ : ∀ {m n k} (a : Type n) (ρ : Sub Fin m k) (Γ : Ctx k n) →
            a ∷ (ρ /Var Γ) ≡ (ρ Var.↑) /Var (a ∷ Γ)
   /Var-∷ a []      Γ = refl
-  /Var-∷ a (x ∷ ρ) Γ = cong (_∷_ a) (cong (_∷_ (lookup x Γ)) (begin
-    map (λ x → lookup x Γ) ρ                   ≡⟨ refl ⟩
-    map (λ x → lookup (suc x) (a ∷ Γ)) ρ       ≡⟨ map-∘ _ _ ρ ⟩
-    map (λ x → lookup x (a ∷ Γ)) (map suc ρ)   ∎))
+  /Var-∷ a (x ∷ ρ) Γ = cong (_∷_ a) (cong (_∷_ (lookup Γ x)) (begin
+    map (λ x → lookup Γ x) ρ                   ≡⟨ refl ⟩
+    map (λ x → lookup (a ∷ Γ) (suc x)) ρ       ≡⟨ map-∘ _ _ ρ ⟩
+    map (λ x → lookup (a ∷ Γ) x) (map suc ρ)   ∎))
 
   -- Invariants of term variable substitution (renaming)
   idVar-/Var   : ∀ {m n} (Γ : Ctx m n) → Γ ≡ (Var.id /Var Γ)
@@ -194,7 +197,7 @@ module WtTermTypeSubst where
   -- Type substitutions lifted to well-typed terms
   _/_ : ∀ {m n k} {Γ : Ctx m n} {t : Term m n} {a : Type n} →
         Γ ⊢ t ∈ a → (σ : Sub Type n k) → Γ C./ σ ⊢ t Tm./ σ ∈ a Tp./ σ
-  var x             / σ = ⊢substTp (lookup-⊙ x) (var x)
+  _/_  {Γ = Γ} (var x) σ = ⊢substTp (lookup-⊙ x {ρ₁ = Γ}) (var x)
   _/_ {Γ = Γ} (Λ ⊢t)  σ =
     Λ (⊢substCtx (sym (map-weaken-⊙ Γ σ)) (⊢t / σ ↑))
   λ' a ⊢t           / σ = λ' (a Tp./ σ) (⊢t / σ)
@@ -258,7 +261,7 @@ module WtTermTermSubst where
   _/Var_ : ∀ {m n k} {Γ : Ctx k n} {t : Term m n} {a : Type n}
              (ρ : Sub Fin m k) → ρ C./Var Γ ⊢ t ∈ a → Γ ⊢ t Tm./Var ρ ∈ a
   _/Var_ {Γ = Γ} ρ (var x)   =
-    ⊢substTp (sym (C./Var-lookup x ρ Γ)) (var (lookup x ρ))
+    ⊢substTp (sym (C./Var-lookup x ρ Γ)) (var (lookup ρ x))
   _/Var_ {Γ = Γ} ρ (Λ ⊢t)    =
     Λ    (ρ      /Var ⊢substCtx (C./Var-weaken ρ Γ) ⊢t)
   _/Var_ {Γ = Γ} ρ (λ' a ⊢t) =
@@ -402,15 +405,15 @@ module WtTermOperators where
   -- Field access/projection
   π : ∀ {m n k} {Γ : Ctx m n} (x : Fin k) {t : Term m n}
         {as : Vec (Type n) k} →
-      Γ ⊢ t ∈ rec as → Γ ⊢ Ut.π x t {as} ∈ lookup x as
+      Γ ⊢ t ∈ rec as → Γ ⊢ Ut.π x t {as} ∈ lookup as x
   π             () {as = []}     ⊢t
   π {m} {Γ = Γ} x  {as = a ∷ as} ⊢t =
     (⊢t [ b ]) · ⊢substTp as′→ⁿb′≡ (λⁿ as′ (var x′))
     where
       as′ = a ∷ as
       x′  = inject+ m x
-      b   = lookup x   as′
-      b′  = lookup x′ (as′ ++ Γ)
+      b   = lookup as′ x
+      b′  = lookup (as′ ++ Γ) x′
       as′→ⁿb′≡ : as′ →ⁿ b′ ≡ (map weaken as′ →ⁿ var zero) [/tp b ]
       as′→ⁿb′≡ = begin
           as′ →ⁿ b′
