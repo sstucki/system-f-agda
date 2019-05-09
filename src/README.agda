@@ -14,6 +14,9 @@
 -- freely available from
 --
 --   https://github.com/agda/agda-stdlib/
+--
+-- The code has been tested using Agda 2.5.3 and version 0.14 of the
+-- Agda standard library.
 
 
 module README where
