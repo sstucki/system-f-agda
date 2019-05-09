@@ -4,11 +4,12 @@
 
 module SystemF.Eval where
 
-open import Coinduction using (∞; ♯_; ♭)
+open import Codata.Musical.Notation
 open import Category.Monad
 open import Category.Monad.Partiality.All as All using (All; now; later)
 open import Data.Fin using (Fin; zero; suc)
 open import Data.Maybe as Maybe using (just; nothing)
+open import Data.Maybe.Relation.Unary.Any as MaybeAny using (just)
 open import Data.Nat using (_+_)
 open import Data.Vec using ([])
 open import Function
@@ -190,11 +191,11 @@ infix 4 _⊢comp_∈_
 -- case of failing well-typed computations through the use of
 -- Maybe.Any.
 _⊢comp_∈_ : ∀ {m n} → Ctx m n → Comp m n → Type n → Set
-Γ ⊢comp c ∈ a = All (Maybe.Any (λ v → Γ ⊢val v ∈ a)) c
+Γ ⊢comp c ∈ a = All (MaybeAny.Any (λ v → Γ ⊢val v ∈ a)) c
 
 -- Well-typed computations do not fail.
 does-not-fail : ∀ {m n} {Γ : Ctx m n} {c a} → Γ ⊢comp c ∈ a → ¬ c ≈ fail
-does-not-fail (now (just _)) (now ())
+does-not-fail (now (MaybeAny.just _)) (now ())
 does-not-fail (later ⊢c)     (laterˡ c-fails) = does-not-fail (♭ ⊢c) c-fails
 
 -- It remains to prove that well-typed terms evaluate to well-typed
@@ -209,7 +210,7 @@ infix 4 ⊢compP_∈_ ⊢val_∈_
 
 -- Closed well-typed computation "programs".
 ⊢compP_∈_ : Comp 0 0 → Type 0 → Set₁
-⊢compP c ∈ a = AllP (Maybe.Any (λ v → [] ⊢val v ∈ a)) c
+⊢compP c ∈ a = AllP (MaybeAny.Any (λ v → [] ⊢val v ∈ a)) c
 
 -- A short hand for closed well-typed values.
 ⊢val_∈_ : Val 0 0 → Type 0 → Set

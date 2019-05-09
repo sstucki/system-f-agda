@@ -4,10 +4,12 @@
 
 module SystemF.Reduction where
 
-open import Coinduction using (♯_; ♭)
+open import Codata.Musical.Notation
 open import Category.Monad
 open import Category.Monad.Partiality.All
 open import Data.Maybe as Maybe using (Maybe; just; nothing; map)
+open import Data.Maybe.Relation.Unary.All as MaybeAll using (nothing; just)
+open import Data.Maybe.Relation.Unary.Any as MaybeAny using (just)
 open import Data.Nat using (ℕ; _+_)
 open import Data.Unit using (tt)
 open import Data.Vec using ([])
@@ -109,7 +111,7 @@ data _⊢res_∈_ {m n} (Γ : Ctx m n) : Result m n → Type n → Set where
 
 -- Well-typedness lifted to possibly undefined reduction steps.
 _⊢res?_∈_ : ∀ {m n} → Ctx m n → Maybe (Result m n) → Type n → Set
-Γ ⊢res? r? ∈ a = Maybe.All (λ r → Γ ⊢res r ∈ a) r?
+Γ ⊢res? r? ∈ a = MaybeAll.All (λ r → Γ ⊢res r ∈ a) r?
 
 -- Preservation of well-typedness: a well-typed term reduces in one
 -- step to a result of the same type or fails to reduce.

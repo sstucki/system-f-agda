@@ -8,7 +8,7 @@ open import Data.Fin using (Fin; suc; zero; pred)
 open import Data.Nat as Nat using (ℕ; _+_)
 open import Data.Product
 open import Data.Vec using (_∷_; []; lookup)
-open import Function
+open import Function hiding (typeOf)
 open import Relation.Nullary
 open import Relation.Nullary.Negation
 open import Relation.Binary using (Decidable)
@@ -178,7 +178,7 @@ HasType Γ t = ∃ λ a → Γ ⊢ t ∈ a
 -- functionality, this proves that the well-typedness relation is a
 -- decidable partial function.
 typeOf : ∀ {m n} (Γ : Ctx m n) t → Dec (HasType Γ t)
-typeOf Γ (var x)      = yes (lookup x Γ , var x)
+typeOf Γ (var x)      = yes (lookup Γ x , var x)
 typeOf Γ (Λ t)        with typeOf (weakenCtx Γ) t
 ... | yes (a , t∈a)   = yes (∀' a , Λ t∈a)
 ... | no ∄a           = no (∄a ∘ map id proj₂ ∘ Λ-inversion ∘ proj₂)
