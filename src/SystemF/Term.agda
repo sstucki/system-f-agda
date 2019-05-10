@@ -54,7 +54,7 @@ data Val (m n : ℕ) : Set where
 -- Type substitutions in terms
 module TermTypeSubst where
 
-  module TermTypeApp {T} (l : Lift T Type) where
+  module TermTypeApp {T : ℕ → Set} (l : Lift T Type) where
     open Lift l hiding (var)
     open TypeSubst.TypeApp l renaming (_/_ to _/tp_)
 
@@ -132,7 +132,7 @@ module TermTypeLemmas where
   /-wk t = /-↑⋆ TypeSubst.wk VarSubst.wk (λ k x → begin
     tpVar x T./ T.wk T.↑⋆ k         ≡⟨ T.var-/-wk-↑⋆ k x ⟩
     tpVar (Data.Fin.lift k suc x)   ≡⟨ cong tpVar (sym (V.var-/-wk-↑⋆ k x)) ⟩
-    tpVar (lookup x (V.wk V.↑⋆ k))  ≡⟨ refl ⟩
+    tpVar (lookup (V.wk V.↑⋆ k) x)  ≡⟨ refl ⟩
     tpVar x T./Var V.wk V.↑⋆ k      ∎) 0 t
       where open Type using () renaming (var to tpVar)
 
@@ -163,7 +163,7 @@ module TermTermSubst where
 
     -- Apply a term substitution to a term
     _/_ : ∀ {m n k} → Term m n → TermSub T m n k → Term k n
-    var x      / ρ = lift (lookup x ρ)
+    var x      / ρ = lift (lookup ρ x)
     Λ t        / ρ = Λ (t / ρ ↑tp)
     λ' a t     / ρ = λ' a (t / ρ ↑tm)
     μ a t      / ρ = μ a (t / ρ ↑tm)
@@ -288,4 +288,4 @@ module TermOperators where
   π : ∀ {m n k} → Fin k → Term m n → {as : Vec (Type n) k} → Term m n
   π     () t {[]}
   π {m} x  t {a ∷ as} =
-    (t [ lookup x (a ∷ as) ]) · (λⁿ (a ∷ as) (var (inject+ m x)))
+    (t [ lookup (a ∷ as) x ]) · (λⁿ (a ∷ as) (var (inject+ m x)))

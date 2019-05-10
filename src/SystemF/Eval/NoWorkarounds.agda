@@ -5,11 +5,12 @@
 
 module SystemF.Eval.NoWorkarounds where
 
-open import Coinduction using (∞; ♯_; ♭)
+open import Codata.Musical.Notation using (∞; ♯_; ♭)
 open import Category.Monad
 open import Category.Monad.Partiality.All
 open import Data.Fin using (Fin; zero; suc)
 open import Data.Maybe as Maybe using (just; nothing)
+open import Data.Maybe.Relation.Unary.Any as MaybeAny using (just)
 open import Data.Nat using (_+_)
 open import Data.Vec using ([])
 open import Relation.Binary.PropositionalEquality as P using (_≡_)

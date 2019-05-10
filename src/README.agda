@@ -15,7 +15,7 @@
 --
 --   https://github.com/agda/agda-stdlib/
 --
--- The code has been tested using Agda 2.5.3 and version 0.14 of the
+-- The code has been tested using Agda 2.6.0.1 and version 1.0.1 of the
 -- Agda standard library.
 
 

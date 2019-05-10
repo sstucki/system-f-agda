@@ -4,10 +4,11 @@
 
 module PartialityAndFailure where
 
-open import Coinduction using (∞; ♯_; ♭)
 open import Category.Monad
+open import Codata.Musical.Notation
 open import Category.Monad.Partiality as Partiality using (_⊥)
 open import Data.Maybe as Maybe using (Maybe; just; nothing; maybe)
+open import Data.Maybe.Categorical as MaybeC using ()
 open import Level using (_⊔_)
 open import Function
 open import Relation.Binary as B hiding (Rel)
@@ -27,7 +28,7 @@ _?⊥ : ∀ {a} → Set a → Set a
 A ?⊥ = Maybe A ⊥
 
 monad : ∀ {f} → RawMonad {f = f} (_⊥ ∘ Maybe)
-monad = Maybe.monadT Partiality.monad
+monad = MaybeC.monadT Partiality.monad
 
 private module M {f} = RawMonad (monad {f})
 
